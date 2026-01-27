@@ -1,0 +1,167 @@
+/* 🔹 Imágenes responsivas */
+.img-fluid {
+    width: 100%;
+    height: auto;
+}
+
+/* 🔹 Sección principal */
+.festivos-section {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+/* 🔹 Título con línea decorativa */
+.section-title {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 2rem;
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.section-title::after {
+    content: "";
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(to right, #3498db, #2ecc71);
+    display: block;
+    margin: 10px auto;
+    border-radius: 3px;
+}
+
+/* 🔹 Firefox */
+.cards-container {
+    display: flex;
+    gap: 20px;
+    padding: 15px 0;
+    overflow-x: auto;
+}
+
+/* 🔹 Chrome, Safari, Edge */
+.cards-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.cards-container::-webkit-scrollbar-thumb {
+    background-color: #3498db;
+    border-radius: 10px;
+}
+
+.cards-container::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+
+/* Chrome scroll */
+.cards-container::-webkit-scrollbar { height: 8px; }
+.cards-container::-webkit-scrollbar-thumb { background: #3498db; border-radius: 10px; }
+
+/* 🔹 Tarjetas */
+.card {
+    min-width: 280px;
+    border-radius: 10px;
+    background: #ffffff;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: .25s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.card-img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.card-content { padding: 15px; }
+.card-content h3 { color: #2c3e50; font-size: 1.3rem; }
+.card-content p { color: #7f8c8d; }
+
+/* 🔹 Etiqueta festivo */
+.festivo-tag {
+    display: inline-block;
+    padding: 4px 8px;
+    background: #e74c3c;
+    color: #ffffff;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* 🔹 Scroll modal aviso de privacidad */
+.modal-body-scroll {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* 🔹 Tarjeta privacidad */
+.priv-card {
+    background: linear-gradient(135deg, #0077b6, #023e8a);
+    border-left: 6px solid #48cae4;
+    border-radius: 8px;
+}
+
+.priv-card i {
+    background: rgba(255,255,255,0.2);
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.priv-card ul { padding-left: 18px; }
+.priv-card ul li::marker { color: #ade8f4; }
+
+/* 🔹 Checkbox accesible */
+.form-check-input,
+.form-check-label {
+    cursor: pointer;
+}
+
+/* ───────────────────────────────────────────── */
+/* 🔷 MEJORAS PARA EL MODAL DEL PDF (Reglamento) */
+/* ───────────────────────────────────────────── */
+
+/* Centrado perfecto */
+#autoopen .modal-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px !important;
+}
+
+/* PDF más reducido y no pegado al borde */
+#autoopen iframe {
+    width: 95% !important;
+    max-width: 750px;
+    height: 80vh !important;
+    background: #fff;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+}
+
+/* Ajuste del ancho general del modal */
+#autoopen .modal-dialog {
+    max-width: 900px !important;
+    margin: 20px auto;
+}
+
+/* Fondo del modal blanco y elegante */
+#autoopen .modal-content {
+    background: #ffffff !important;
+    border-radius: 10px;
+}
+
+/* Evitar desplazamiento del body cuando modal abierto */
+.modal-open {
+    overflow: hidden !important;
+}
+
+#autoopen .modal-dialog {
+    margin: 0 auto !important;
+    max-width: 900px !important;
+}
