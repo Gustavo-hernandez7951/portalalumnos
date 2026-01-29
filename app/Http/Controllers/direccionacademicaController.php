@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Dato_personal;
 use App\Models\Carga_academica;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
 

@@ -32,52 +32,91 @@ class serviciosescolaresController extends Controller
         switch (Auth::user()->gradoconsulta) {
 
             case "LICU":
-                // Historial completo y ordenado
+
+                // 1) Traemos plan/programa del alumno desde datos_personales
+                $alumno = Dato_personal::where('matricula', Auth::user()->cuenta)
+                    ->select(['idplan', 'programa'])
+                    ->first();
+
+                $plan = (int) ($alumno->idplan ?? 0);
+                $programa = strtoupper(trim($alumno->programa ?? ''));
+
+                // 2) Historial completo
                 $historial = Historial_academico::where('matricula', Auth::user()->cuenta)
                     ->orderBy('clave_mat', 'asc')
                     ->get();
 
                 $materiascount = $historial->count();
 
-                // Historial sin inglés (para promedio) y ordenado
-                $historial2 = Historial_academico::where('matricula', Auth::user()->cuenta)
-                    ->where('asignatura', 'not like', '%INGLES%')
-                    ->orderBy('clave_mat', 'asc')
-                    ->get();
+                // 3) Historial para promedio según regla institucional:
+                //    Plan 2002 y 2016 -> excluir inglés
+                //    Plan 2023 -> incluir inglés
+                $queryPromedio = Historial_academico::where('matricula', Auth::user()->cuenta)
+                    ->orderBy('clave_mat', 'asc');
 
+                if (in_array($plan, [2002, 2016], true)) {
+                    $queryPromedio->where('asignatura', 'not like', '%INGLES%');
+                }
+
+                $historial2 = $queryPromedio->get();
                 $materiascount2 = $historial2->count();
-                $sumcals = $historial2->sum('calificacion');
-                $promedio = $materiascount2 > 0 ? bcdiv($sumcals, $materiascount2, 2) : 0;
 
-                // Construcción de la tabla
+                // 4) Promedio TRUNCADO a 2 decimales (sin redondear)
+                $sumcals = (float) $historial2->sum('calificacion');
+
+                if ($materiascount2 > 0) {
+                    $raw = $sumcals / $materiascount2;
+                    $promedio = floor($raw * 100) / 100;                 // truncado real
+                    $promedio = number_format($promedio, 2, '.', '');     // "0.00"
+                } else {
+                    $promedio = number_format(0, 2, '.', '');
+                }
+
+                //Helper local: convierte número a A/NA (solo para visualización)
+                $toAcreditadoNA = function ($valor) {
+                    if ($valor === null || $valor === '') return '';
+                    // Si ya viene como texto, lo respetamos
+                    if (is_string($valor) && !is_numeric($valor)) return strtoupper(trim($valor));
+
+                    $num = (float) $valor;
+                    return ($num >= 6) ? 'A' : 'NA';
+                };
+
+                // 5) Construcción de la tabla (con regla A/NA para planes 2002 y 2016)
                 $asig = [];
                 foreach ($historial as $h) {
+
+                    $esIngles = stripos($h->asignatura ?? '', 'INGLES') !== false;
+                    $usaAcreditado = $esIngles && in_array($plan, [2002, 2016], true);
+
                     $asig[] = [
                         'orden' => $h->num_orden ?? '',
-                        'clave' => $h->clave_mat ?? '', 
+                        'clave' => $h->clave_mat ?? '',
                         'asignatura' => $h->asignatura ?? '',
 
-                        'calord' => $h->calificacion ?? '',
+                        'calord' => $usaAcreditado ? $toAcreditadoNA($h->calificacion) : ($h->calificacion ?? ''),
                         'fechaord' => $h->fecha_examen ?? '',
 
-                        'calext' => $h->cal_ext ?? '',
+                        'calext' => $usaAcreditado ? $toAcreditadoNA($h->cal_ext) : ($h->cal_ext ?? ''),
                         'fechaext' => $h->fecha_ext ?? '',
 
-                        'calo1r' => $h->cal_o1r ?? '',
+                        'calo1r' => $usaAcreditado ? $toAcreditadoNA($h->cal_o1r) : ($h->cal_o1r ?? ''),
                         'fechao1r' => $h->fecha_o1r ?? '',
 
-                        'cale1r' => $h->cal_e1r ?? '',
+                        'cale1r' => $usaAcreditado ? $toAcreditadoNA($h->cal_e1r) : ($h->cal_e1r ?? ''),
                         'fechae1r' => $h->fecha_e1r ?? '',
 
-                        'calo2r' => $h->cal_o2r ?? '',
+                        'calo2r' => $usaAcreditado ? $toAcreditadoNA($h->cal_o2r) : ($h->cal_o2r ?? ''),
                         'fechao2r' => $h->fecha_o2r ?? '',
 
-                        'cale2r' => $h->cal_e2r ?? '',
+                        'cale2r' => $usaAcreditado ? $toAcreditadoNA($h->cal_e2r) : ($h->cal_e2r ?? ''),
                         'fechae2r' => $h->fecha_e2r ?? '',
                     ];
                 }
 
-                return view('serviciosescolares.kardexlicu', compact('asig', 'promedio', 'materiascount'));
+                return view('serviciosescolares.kardexlicu', compact(
+                    'asig', 'promedio', 'materiascount', 'plan', 'programa'
+                ));
         }
     }
 
