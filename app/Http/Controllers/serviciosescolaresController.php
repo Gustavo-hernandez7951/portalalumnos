@@ -33,7 +33,6 @@ class serviciosescolaresController extends Controller
 
             case "LICU":
 
-                // 1) Traemos plan/programa del alumno desde datos_personales
                 $alumno = Dato_personal::where('matricula', Auth::user()->cuenta)
                     ->select(['idplan', 'programa'])
                     ->first();
@@ -41,19 +40,18 @@ class serviciosescolaresController extends Controller
                 $plan = (int) ($alumno->idplan ?? 0);
                 $programa = strtoupper(trim($alumno->programa ?? ''));
 
-                // 2) Historial completo
+                //Historial completo (NULL num_orden al final)
                 $historial = Historial_academico::where('matricula', Auth::user()->cuenta)
-                    ->orderBy('clave_mat', 'asc')
+                    ->orderByRaw('num_orden IS NULL, num_orden ASC, clave_mat ASC')
                     ->get();
 
                 $materiascount = $historial->count();
 
-                // 3) Historial para promedio según regla institucional:
-                //    Plan 2002 y 2016 -> excluir inglés
-                //    Plan 2023 -> incluir inglés
+                //Historial para promedio (misma lógica de orden)
                 $queryPromedio = Historial_academico::where('matricula', Auth::user()->cuenta)
-                    ->orderBy('clave_mat', 'asc');
+                    ->orderByRaw('num_orden IS NULL, num_orden ASC, clave_mat ASC');
 
+                // Plan 2002 y 2016 -> excluir inglés del promedio
                 if (in_array($plan, [2002, 2016], true)) {
                     $queryPromedio->where('asignatura', 'not like', '%INGLES%');
                 }
@@ -61,28 +59,24 @@ class serviciosescolaresController extends Controller
                 $historial2 = $queryPromedio->get();
                 $materiascount2 = $historial2->count();
 
-                // 4) Promedio TRUNCADO a 2 decimales (sin redondear)
+                //Promedio truncado a 1 decimal (sin redondear)
                 $sumcals = (float) $historial2->sum('calificacion');
 
                 if ($materiascount2 > 0) {
                     $raw = $sumcals / $materiascount2;
-                    $promedio = floor($raw * 100) / 100;                 // truncado real
-                    $promedio = number_format($promedio, 2, '.', '');     // "0.00"
+                    $promedio = floor($raw * 10) / 10;
+                    $promedio = number_format($promedio, 1, '.', '');
                 } else {
-                    $promedio = number_format(0, 2, '.', '');
+                    $promedio = number_format(0, 1, '.', '');
                 }
 
-                //Helper local: convierte número a A/NA (solo para visualización)
+                // Helper: A/NA solo para visualización en inglés (planes 2002/2016)
                 $toAcreditadoNA = function ($valor) {
                     if ($valor === null || $valor === '') return '';
-                    // Si ya viene como texto, lo respetamos
                     if (is_string($valor) && !is_numeric($valor)) return strtoupper(trim($valor));
-
-                    $num = (float) $valor;
-                    return ($num >= 6) ? 'A' : 'NA';
+                    return ((float) $valor >= 6) ? 'A' : 'NA';
                 };
 
-                // 5) Construcción de la tabla (con regla A/NA para planes 2002 y 2016)
                 $asig = [];
                 foreach ($historial as $h) {
 
@@ -113,12 +107,12 @@ class serviciosescolaresController extends Controller
                         'fechae2r' => $h->fecha_e2r ?? '',
                     ];
                 }
-
                 return view('serviciosescolares.kardexlicu', compact(
                     'asig', 'promedio', 'materiascount', 'plan', 'programa'
                 ));
         }
     }
+
 
     public function serviciosocial()
     {
