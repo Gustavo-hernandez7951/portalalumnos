@@ -8,8 +8,9 @@
     @endif
 
     <link rel="stylesheet" href="{{ asset('css/iniciolicu.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/iniciomacu.css') }}">
 
-    <!-- Modal Aviso Privacidad -->
+    <!-- Modal Aviso Privacidad 
     <div class="modal fade" id="modalPrivacidad" tabindex="-1"
         data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-md modal-dialog-centered">
@@ -40,7 +41,7 @@
                     <p class="small text-muted text-center">
                         <strong>Para más información, revisa el siguiente documento:</strong> <br><br>
                         <a href="https://drive.google.com/file/d/1ygFP5adR4YHFU_UpRVZrs250PV4IJ4lh/view" 
-                           target="_blank" rel="noopener noreferrer">
+                            target="_blank" rel="noopener noreferrer">
                             <i class="fa-solid fa-file"></i> Abrir documento
                         </a>
                     </p>
@@ -60,7 +61,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Modal Reglamento PDF -->
     <div class="modal fade" id="autoopen" tabindex="-1"
@@ -86,8 +87,7 @@
     </div>
 
     <!-- Modal para imagen completa -->
-    <div class="modal fade" id="modalImagenCompleta" tabindex="-1" role="dialog" 
-         aria-labelledby="modalImagenCompletaLabel" aria-hidden="true">
+    <div class="modal fade" id="modalImagenCompleta" tabindex="-1" role="dialog"  aria-labelledby="modalImagenCompletaLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-navy text-white">
@@ -100,8 +100,8 @@
                 </div>
                 <div class="modal-body text-center p-0">
                     <img id="imagenModalCompleta" src="" 
-                         alt="Comunicado importante - Vista completa" 
-                         class="img-fluid rounded">
+                        alt="Comunicado importante - Vista completa" 
+                        class="img-fluid rounded">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
@@ -469,9 +469,9 @@
                                                                 <i class="fas fa-info-circle mr-1"></i> Ver calendario completo
                                                             </button>
                                                             <a href="https://drive.google.com/file/d/1a-OKwbuwvPViuK5WVrs_DzXVVfto383e/preview?usp=sharing" 
-                                                               target="_blank" 
-                                                               rel="noopener noreferrer"
-                                                               class="btn btn-sm btn-outline-primary">
+                                                            target="_blank" 
+                                                            rel="noopener noreferrer"
+                                                            class="btn btn-sm btn-outline-primary">
                                                                 <i class="fas fa-external-link-alt mr-1"></i> Abrir en Drive
                                                             </a>
                                                         </div>
@@ -624,73 +624,6 @@
             }
         });
     </script>
-
-    <style>
-        .cursor-pointer {
-            cursor: pointer;
-        }
-        
-        .carousel-image {
-            transition: transform 0.3s ease;
-        }
-        
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-            width: 30px;
-            height: 30px;
-            background-size: 50%;
-        }
-        
-        .carousel-indicators li {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-        
-        .carousel-indicators .active {
-            background-color: #001f3f; /* Color navy */
-        }
-        
-        .carousel-caption {
-            bottom: 10px;
-            left: 10%;
-            right: 10%;
-            padding: 5px 10px;
-        }
-        
-        /* Estilos específicos para posgrado */
-        .btn-outline-navy {
-            color: #001f3f;
-            border-color: #001f3f;
-        }
-        
-        .btn-outline-navy:hover {
-            background-color: #001f3f;
-            color: white;
-        }
-        
-        .border-navy {
-            border-color: #001f3f !important;
-        }
-        
-        .text-navy {
-            color: #001f3f !important;
-        }
-        
-        .bg-navy {
-            background-color: #001f3f !important;
-        }
-        
-        .card-navy {
-            border-color: #001f3f;
-        }
-        
-        .card-navy .card-header {
-            background-color: #001f3f;
-            color: white;
-        }
-    </style>
 
     <script src="{{ asset('js/iniciolicu.js') }}"></script>
 @endsection

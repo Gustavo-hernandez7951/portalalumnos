@@ -1,0 +1,64 @@
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.carousel-image {
+    transition: transform 0.3s ease;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    width: 30px;
+    height: 30px;
+    background-size: 50%;
+}
+
+.carousel-indicators li {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.carousel-indicators .active {
+    background-color: #001f3f; /* Color navy */
+}
+
+.carousel-caption {
+    bottom: 10px;
+    left: 10%;
+    right: 10%;
+    padding: 5px 10px;
+}
+
+/* Estilos específicos para posgrado */
+.btn-outline-navy {
+    color: #001f3f;
+    border-color: #001f3f;
+}
+
+.btn-outline-navy:hover {
+    background-color: #001f3f;
+    color: white;
+}
+
+.border-navy {
+    border-color: #001f3f !important;
+}
+
+.text-navy {
+    color: #001f3f !important;
+}
+
+.bg-navy {
+    background-color: #001f3f !important;
+}
+
+.card-navy {
+    border-color: #001f3f;
+}
+
+.card-navy .card-header {
+    background-color: #001f3f;
+    color: white;
+}

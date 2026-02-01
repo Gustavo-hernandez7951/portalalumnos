@@ -113,7 +113,6 @@ class serviciosescolaresController extends Controller
         }
     }
 
-
     public function serviciosocial()
     {
         switch (Auth::user()->gradoconsulta) {
