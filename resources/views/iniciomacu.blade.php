@@ -10,59 +10,6 @@
     <link rel="stylesheet" href="{{ asset('css/iniciolicu.css') }}">
     <link rel="stylesheet" href="{{ asset('css/iniciomacu.css') }}">
 
-    <!-- Modal Aviso Privacidad 
-    <div class="modal fade" id="modalPrivacidad" tabindex="-1"
-        data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-md modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-navy text-white">
-                    <h5 class="modal-title">Aviso de Privacidad</h5>
-                </div>
-
-                <div class="modal-body modal-body-scroll">
-                    <div class="priv-card p-3 mb-3 rounded shadow-sm">
-                        <div class="d-flex align-items-start">
-                            <i class="fas fa-shield-alt fa-2x text-white me-3"></i>
-                            <div>
-                                <h6 class="text-white fw-bold mb-1">Protección de tus datos personales</h6>
-                                <p class="text-white small mb-2">
-                                    El C.U.H. protege tu información conforme a la ley. Puedes ejercer tus Derechos ARCO:
-                                </p>
-                                <ul class="text-white small list-unstyled mb-0">
-                                    <li>• Acceso</li>
-                                    <li>• Rectificación</li>
-                                    <li>• Cancelación</li>
-                                    <li>• Oposición</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <p class="small text-muted text-center">
-                        <strong>Para más información, revisa el siguiente documento:</strong> <br><br>
-                        <a href="https://drive.google.com/file/d/1ygFP5adR4YHFU_UpRVZrs250PV4IJ4lh/view" 
-                            target="_blank" rel="noopener noreferrer">
-                            <i class="fa-solid fa-file"></i> Abrir documento
-                        </a>
-                    </p>
-
-                    <div class="form-check mt-3">
-                        <input class="form-check-input" type="checkbox" id="chkPriv">
-                        <label class="form-check-label small" for="chkPriv">
-                            He leído y acepto el Aviso de Privacidad
-                        </label>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button id="btnAceptarPriv" class="btn btn-primary btn-lg" disabled>
-                        Aceptar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div> -->
-
     <!-- Modal Reglamento PDF -->
     <div class="modal fade" id="autoopen" tabindex="-1"
         data-bs-backdrop="static" data-bs-keyboard="false">
@@ -350,6 +297,37 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <!-- Botón 5: Diplomado 1 -->
+                                    <div class="mb-3">
+                                        <button class="btn bg-navy btn-lg btn-block text-left" type="button"
+                                                data-toggle="collapse" data-target="#diplomado1Info"
+                                                aria-expanded="false" aria-controls="diplomado1Info">
+                                            <i class="fas fa-graduation-cap mr-2"></i>Diplomado la Partes del Código Nacional de Procedimientos Civiles y Familiares
+                                            <i class="fas fa-chevron-down float-right mt-1"></i>
+                                        </button>
+
+                                        <div class="collapse mt-2" id="diplomado1Info">
+                                            <div class="card card-body border-navy">
+
+                                                <h5 class="text-center text-navy mb-3">
+                                                    <strong>Diplomado la Partes del Código Nacional de Procedimientos Civiles y Familiares</strong>
+                                                </h5>
+
+                                                <!-- Imagen mostrada directamente -->
+                                                <div class="text-center">
+                                                    <img src="{{ asset('dist/img/Cursos/Diplomado1.webp') }}"
+                                                        alt="Diplomado 1"
+                                                        class="img-fluid rounded shadow"
+                                                        style="max-height: 500px; object-fit: contain; cursor: pointer;"
+                                                        onclick='abrirImagenModal("{{ asset("dist/img/Cursos/Diplomado1.webp") }}", "Diplomado 1")'>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
                                 </div>
 
                                 <!-- Columna para el carrusel de imágenes (lado derecho más grande) -->
@@ -367,6 +345,7 @@
                                                         <li data-target="#carouselAnuncios" data-slide-to="0" class="active"></li>
                                                         <li data-target="#carouselAnuncios" data-slide-to="1"></li>
                                                         <li data-target="#carouselAnuncios" data-slide-to="2"></li>
+                                                        <li data-target="#carouselAnuncios" data-slide-to="3"></li>
                                                     </ol>
                                                     
                                                     <!-- Slides del carrusel -->
@@ -414,6 +393,20 @@
                                                             <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2">
                                                                 <h6 class="mb-1">Calendario Escolar 2026</h6>
                                                                 <p class="small mb-0">Consulta todas las fechas importantes del ciclo escolar</p>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Slide 4: Diplomado 1 -->
+                                                        <div class="carousel-item">
+                                                            <img src="{{ asset('dist/img/Cursos/Diplomado1.webp') }}"
+                                                                class="d-block w-100 carousel-image"
+                                                                alt="Diplomado 1"
+                                                                style="height: 400px; object-fit: contain; background:#fff; cursor: pointer;"
+                                                                onclick='abrirImagenModal("{{ asset("dist/img/Cursos/Diplomado1.webp") }}", "Diplomado 1")'>
+
+                                                            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2">
+                                                                <h6 class="mb-1">Diplomado</h6>
+                                                                <p class="small mb-0">Consulta la información del diplomado.</p>
                                                             </div>
                                                         </div>
 
