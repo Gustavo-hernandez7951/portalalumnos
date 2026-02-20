@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Calificacion;
 use Illuminate\Support\Facades\Auth;
 Use \Carbon\Carbon;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Barryvdh\DomPDF\Facade as PDF;
 
 class bimestreactualController extends Controller
@@ -118,87 +117,71 @@ class bimestreactualController extends Controller
         }
     }
 
-    public function boletaPDF(){
-        switch (Auth::user()->gradoconsulta) {
-            case "EPCU":
-                // return view('inicioepcu', compact('dps'));
-                break;
-            case "LICU":
-                // Consulta periodo actual
-                $periodos = Calificacion::where('matricula', Auth::user()->cuenta)
-                ->orderBy('fecha_examen', 'desc')
-                ->first();
-                if($periodos != null){
-                    $periodo = $periodos->periodo;
-                }else{
-                    $periodo = '';
-                }
-                
-                // Consulta calificacion periodo actual
-                $calificaciones = Calificacion::where('matricula', Auth::user()->cuenta)
-                ->where('periodo', $periodo)
-                ->orderBy('num_orden', 'asc')
-                ->get();
+public function boletaPDF()
+{
+    @set_time_limit(120);
+    ini_set('memory_limit', '512M');
 
-                // arreglo
-                $datoscals = [];
-                foreach($calificaciones as $calificacion){
-                $datos_cals = [ 'clave' => trim($calificacion['clave_mat']) ?? '',   
-                                'calificacion' => $calificacion['calificacion'] ?? ''];
-                array_push($datoscals, $datos_cals); //conexion arreglo
-                }
-                $claveen1 = array_column($datoscals, 'clave');
-                $calsen1 = array_column($datoscals, 'calificacion');
-                $folioclave = implode('-', $claveen1);
-                $foliocalif = implode('-', $calsen1);
-                
-                $fecha = Carbon::now(); //obteniendo fecha actual
-                $folio = Auth::user()->gradoconsulta.'_'.trim($calificacion->matricula).'_'.$periodos->periodo.'_'.$folioclave.'_'.$foliocalif;
+    $grado = Auth::user()->gradoconsulta;
+    $matricula = Auth::user()->cuenta;
 
-                $qrcode = base64_encode(QrCode::format('svg')->size(200)->errorCorrection('H')->generate($folio));
-                $pdf = \PDF::loadView('bimestreactual.boletalicu', compact('calificaciones', 'periodos', 'qrcode'))->setPaper('letter');
-                $pdf->save(storage_path('app/public/boletas/') . $folio.'.pdf');
-                return $pdf->download($folio.'.pdf',array('Attachment'=>false));
-                break;
-            case "MACU":
-                // Consulta periodo actual
-                $cuatrimestres = Calificacion::where('matricula', Auth::user()->cuenta)
-                ->orderBy('fecha_examen', 'desc')
-                ->first();
-                if($cuatrimestres != null){
-                    $cuatrimestre = $cuatrimestres->cuatrimestre;
-                }else{
-                    $cuatrimestre = '';
-                }
-                
-                // Consulta calificacion periodo actual
-                $calificaciones = Calificacion::where('matricula', Auth::user()->cuenta)
-                ->where('cuatrimestre', $cuatrimestre)
-                ->orderBy('num_orden', 'asc')
-                ->get();
+    if ($grado === "LICU") {
+        $periodos = Calificacion::where('matricula', $matricula)
+            ->orderBy('fecha_examen', 'desc')
+            ->first();
+        $periodo = ($periodos !== null) ? $periodos->periodo : '';
+        $calificaciones = Calificacion::where('matricula', $matricula)
+            ->where('periodo', $periodo)
+            ->orderBy('num_orden', 'asc')
+            ->get();
 
-                // arreglo
-                $datoscals = [];
-                foreach($calificaciones as $calificacion){
-                $datos_cals = [ 'clave' => trim($calificacion['clave_mat']) ?? '',   
-                                'calificacion' => $calificacion['calificacion'] ?? ''];
-                array_push($datoscals, $datos_cals); //conexion arreglo
-                }
-                $claveen1 = array_column($datoscals, 'clave');
-                $calsen1 = array_column($datoscals, 'calificacion');
-                $folioclave = implode('-', $claveen1);
-                $foliocalif = implode('-', $calsen1);
-                
-                $fecha = Carbon::now(); //obteniendo fecha actual
-                $folio = Auth::user()->gradoconsulta.'_'.trim($calificacion->matricula).'_'.$cuatrimestres->cuatrimestre.'_'.$folioclave.'_'.$foliocalif;
-
-                $qrcode = base64_encode(QrCode::format('svg')->size(200)->errorCorrection('H')->generate($folio));
-                $pdf = \PDF::loadView('bimestreactual.boletamacu', compact('calificaciones', 'cuatrimestres', 'qrcode'))->setPaper('letter');
-                $pdf->save(storage_path('app/public/boletas/') . $folio.'.pdf');
-                return $pdf->download($folio.'.pdf',array('Attachment'=>false));
-                break;
+        if ($calificaciones->isEmpty()) {
+            abort(404, 'No hay calificaciones para generar la boleta.');
         }
+
+        // Nombre de archivo corto (sin concatenar claves/califs)
+        $folio = "LICU_{$matricula}_{$periodo}_" . now()->format('YmdHis');
+
+        $pdf = PDF::loadView('bimestreactual.boletalicu', compact('calificaciones', 'periodos'))
+            ->setPaper('letter');
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $folio . '.pdf', ['Content-Type' => 'application/pdf']);
     }
+
+    if ($grado == "MACU") {
+
+        $cuatrimestres = Calificacion::where('matricula', $matricula)
+            ->orderBy('fecha_examen', 'desc')
+            ->first();
+
+        $cuatrimestre = ($cuatrimestres !== null) ? $cuatrimestres->cuatrimestre : '';
+
+        if ($cuatrimestre === '') {
+            abort(404, 'No hay cuatrimestre disponible.');
+        }
+
+        $calificaciones = Calificacion::where('matricula', $matricula)
+            ->where('cuatrimestre', $cuatrimestre)
+            ->orderBy('num_orden', 'asc')
+            ->get();
+
+        if ($calificaciones->isEmpty()) {
+            abort(404, 'No hay calificaciones para generar la boleta.');
+        }
+
+        $folio = "MACU_{$matricula}_{$cuatrimestre}_" . now()->format('YmdHis');
+
+        $pdf = PDF::loadView('bimestreactual.boletamacu', compact('calificaciones', 'cuatrimestres'))
+            ->setPaper('letter');
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $folio . '.pdf', ['Content-Type' => 'application/pdf']);
+    }
+    abort(404);
+}
 
     public function boletaPDFindividual($id)
     {
@@ -206,7 +189,7 @@ class bimestreactualController extends Controller
             ->where('matricula', Auth::user()->cuenta)
             ->firstOrFail();
 
-        $pdf = \PDF::loadView('bimestreactual.boletaindividual', compact('calificacion'))
+        $pdf = PDF::loadView('bimestreactual.boletaindividual', compact('calificacion'))
             ->setPaper('letter');
 
         return $pdf->download('Boleta-'.$calificacion->clave_mat.'.pdf');

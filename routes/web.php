@@ -42,6 +42,7 @@ Route::group(['middleware' => ['PreventBackButton','auth']], function(){
     // Rutas Calificaciones
     Route::get('calificaciones-parciales', 'bimestreactualController@parciales')->name('parciales'); //Muestra calificaciones parciales (solo funciona para MACU 'MAESTRIA CUH')
     Route::get('calificaciones-boleta', 'bimestreactualController@boleta')->name('boleta'); //Muestra la ultima boleta que a llevado el alumno
+    
     Route::get('bimestreactual-boletaPDF', 'bimestreactualController@boletaPDF')->name('boletaPDF'); //Permite descargar la boleta en pdf (para eso tiene que haber una boleta que mostrar)
 
     // Rutas Servicios Escolares
@@ -107,5 +108,9 @@ Route::group(['middleware' => ['PreventBackButton','auth']], function(){
 
     // Vista de Aviso de privacidad
     Route::get('aviso-privacidad', function () {return view('privacidad.documentos');})->name('avisoPrivacidad');
+
+    // Rutas Calificaciones
+    Route::get('bimestreactual-boletaPDF', 'bimestreactualController@boletaPDF')->name('boletaPDF'); 
+    Route::post('bimestreactual-boletaPDF/generar', 'bimestreactualController@generarBoletaPDF')->name('boletaPDF.generar');
 
 });
